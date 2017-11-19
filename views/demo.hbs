@@ -1,13 +1,13 @@
 <div id="page-wrapper" style="margin:0px;">
     <div class="row">
-         <div class="col-md-12 hidden-sm hidden-xs">
+        <div class="col-md-12 hidden-sm hidden-xs">
             <h1 class="page-header">
                 <center>
                     <img src="images/mainbanner.png" style="display: block; height: auto; max-width: 100%;" />
                 </center>
             </h1>
         </div>
-        <div class="col-sm-12 hidden-md hidden-lg">
+        <div class="col-sm-12 hidden-md hidden-lg hidden-xl">
             <h1 class="page-header">
                 <center>
                     <img src="images/mobilebanner.png" style="display: block; height: auto; max-width: 100%;" />
@@ -39,23 +39,48 @@
                             <h3 style="margin-bottom: 15px; text-align: center;">What's on your mind?</h3>
                             <h4 style="margin-bottom: 25px; text-align: center;" id="motd"></h4>
                             <div class="col-sm-12" style="padding-top:25px;padding-bottom:10px;">
-                                <p>Let us know what you think and what you would like to see in future</p>                                
+                                <p>Let us know what you think and what you would like to see in future</p>
                             </div>
                             <div class="form-group col-sm-6 has-feedback">
                                 <div class="input-group has-feedback">
                                     <span class="input-group-addon">Your Initiative
-                                        <span class="fa fa-info-circle" data-toggle="tooltip"
-                                            title="" data-original-title="Which Initiative did you work on? If you haven't yet raised a request simply leave this blank"></span>
+                                        <span class="fa fa-info-circle" data-toggle="tooltip" title="" data-original-title="Which Initiative did you work on? If you haven't yet raised a request simply leave this blank"></span>
                                     </span>
                                     <input type="text" class="form-control" id="initiativename">
                                 </div>
                             </div>
                             <div class="form-group col-sm-6 has-feedback">
                                 <div class="input-group has-feedback">
-                                    <span class="input-group-addon">How was it?
-                                        <span class="fa fa-info-circle" data-toggle="tooltip" title="" data-original-title="chose a rating where 10 is the highest rating"></span>
-                                    </span>
-                                    <input type="number" value="5" min="1" max="10" class="form-control" id="costcentre">
+                                    <span class="input-group-addon">How was it</span>
+                                    <div class="well well-sm text-center">
+                                        <div class="btn-group" data-toggle="buttons">
+                                            <label class="btn btn-danger">
+                                                <input type="radio" name="options" id="option2" autocomplete="off">
+                                                <span class="glyphicon glyphicon-ok"></span>
+                                            </label>
+
+                                            <label class="btn btn-warning">
+                                                <input type="radio" name="options" id="option2" autocomplete="off">
+                                                <span class="glyphicon glyphicon-ok"></span>
+                                            </label>
+
+
+                                            <label class="btn btn-default">
+                                                <input type="radio" name="options" id="option2" autocomplete="off">
+                                                <span class="glyphicon glyphicon-ok"></span>
+                                            </label>
+
+                                            <label class="btn btn-info">
+                                                <input type="radio" name="options" id="option2" autocomplete="off">
+                                                <span class="glyphicon glyphicon-ok"></span>
+                                            </label>
+
+                                            <label class="btn btn-success active">
+                                                <input type="radio" name="options" id="option2" autocomplete="off" chacked>
+                                                <span class="glyphicon glyphicon-ok"></span>
+                                            </label>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -72,7 +97,7 @@
                                 <textarea class="form-control" type="textarea" id="contributors" maxlength="140" rows="6"></textarea>
                             </div>
                             <div class="form-group col-sm-12">
-                                <label class="col-sm-12">Do you have any suggestions  ?
+                                <label class="col-sm-12">Do you have any suggestions ?
                                     <span class="fa fa-info-circle" data-toggle="tooltip" title="" data-original-title="What would you like to see in future releases?"></span>
                                 </label>
                                 <textarea class="form-control" type="textarea" id="assistanceRequestedNotes" maxlength="140" rows="3"></textarea>

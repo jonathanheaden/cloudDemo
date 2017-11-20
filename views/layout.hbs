@@ -22,14 +22,30 @@
 
     <!-- Bootstrap Core JavaScript -->
     <script src="javascripts/bootstrap.min.js"></script>
+    
      <script type="text/javascript">
       $(window).load(function () {
             $('[data-toggle="tooltip"]').tooltip();
+            var xhttp = new XMLHttpRequest();
             $("#giveFeedback").bind("click", function (e) {
                 $('#externalcloudFeedback').hide();
-                $('#submissionSuccess').show();
-             })
-      })
+                $('#submissionSuccess').show();            
+                var rating = "no Rating"
+                if ($('#ratingBad').is(":checked")) {rating = "Rating Bad"}
+                if( $('#ratingOK').is(":checked")) {rating = "Rating OK"}
+                if ($('#ratingGood').is(":checked")) {rating = "Rating Good"}
+                var initiative = $('#initiativename').val()
+                var likeText = $('#likeText').val()
+                var dislikeText = $('#dislikeText').val()
+                var suggestionText = $('#suggestionText').val()
+                var RestEP = window.location.href+ '?initiative='+initiative+'&rating='+rating +'&likeText='+likeText+'&dislikeText='+dislikeText+'&suggestionText='+suggestionText
+                xhttp.open("POST", RestEP, true);
+                xhttp.setRequestHeader("Content-type", "application/json");
+                xhttp.send();               
+                var response = JSON.parse(xhttp.responseText);
+                alert(response)
+            });
+      });
      </script>
 
   </body>

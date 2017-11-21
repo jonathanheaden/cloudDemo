@@ -17,19 +17,21 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/demo',function(req,res) {
-    console.log('query string')
-    console.log(req.query)
-    var survey = new Response({
-        initiative :req.query.initiative, 
-        rating: req.query.rating,
-        likeText : req.query.likeText,
-        dislikeText : req.query.dislikeText ,
-        suggestionText : req.query.suggestionText
+    var insertDocument = function(db, callback) {
+        db.collection('responses').insertOne({
+            initiative :req.body.initiative, 
+            rating: req.body.rating,
+            likeText : req.body.likeText,
+            dislikeText : req.body.dislikeText ,
+            suggestionText : req.body.suggestionText
+        },function(err, result) {callback()});
+    }
+    MongoClient.connect(url, function(err, db) {
+        insertDocument(db,function(){})
     })
-    console.log('db record')
-    console.log(survey)
-    survey.save();
+    res.send(req.body)
 })
+
 router.get('/demo', function(req, res, next) {
     res.render('demo', { title: 'Cloud Demo' });
   });

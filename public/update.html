@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>External Cloud Access Request</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+
+    <!-- Custom CSS -->
+    <link href="css/sb-admin-2.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="font-awesome-4.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="js/html5shiv.js"></script>
+        <script src="js/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+    <div id="wrapper">
+        <div id="page-wrapper" style="margin:0px;">
+            <div class="row">
+                <div class="col-md-12 col-lg-12">
+                    <h1 class="page-header">
+                        <center>
+                            <img src="updatebanner.png" style="display: block; height: auto; max-width: 100%;" />
+                        </center>
+                    </h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <div class="jumbotron jumbotron-fluid">
+                <div class="container">
+                    <h3 class="display-3 col-sm-10" id="enabledEnvironmentsTitle">Choose an environment for update</h3>
+                    <div id="showBackButton" style="display:none" class="pull-right">
+                        <input type="button" class="btn btn-info" value="All Active Environments" onclick="location.href='https://teams.global.anz.com/teams/Business%20Optimisation/IS%20and%20A/Cloud%20Environment%20Requests/formassets/updaterequest.html'">
+                    </div>
+                    <h4 class="display-3 col-md-12" id="enabledEnvironments">The following environments are in the approved list and are not yet expired:</h4>
+                    <p class="lead col-md-12" id="motd"></p>
+                </div>
+            </div>
+            <div class="container" id="dataloader">
+                <div class="col-sm-4 col-sm-offset-4">
+                    <!-- <div class="row boxLoading col-sm-12" id="dataloader">Loading previous requests</div> -->
+                    <img src="loading.gif" style="display: block; height: auto; max-width: 100%;" />
+                </div>
+            </div>
+            <div class="container" id="envButtons"></div>
+            <div class="container">
+                <div class="row" id="info" style="display:none; padding:0px 30px 0px 30px;">
+                    <div class="col-sm-4 alert alert-warning" role="alert" id="initiative" style="text-align: center;"></div>
+                    <div class="col-sm-3 col-sm-offset-1 alert alert-warning" role="alert" id="requester" style="text-align: center;"></div>
+                    <div class="col-sm-3 col-sm-offset-1 alert alert-warning" role="alert" id="expirydate" style="text-align: center; display:none;"></div>
+                    <div class="col-sm-3 col-sm-offset-1 alert alert-danger" role="alert" id="expirydatenotanoption" style="text-align: center; display:none;"></div>
+                </div>
+
+
+                <form role="form" id="updateForm" style="display:none">
+                    <div class="form-group col-sm-6">
+                        <label class="col-sm-12">Users with Read Access
+                            <span class="fa fa-info-circle" data-toggle="tooltip" title="" data-original-title="List the Lan IDs for users to be granted Read Access"></span>
+                        </label>
+                        <div class="input-group">
+                            <input type="text" id="addreader">
+                            <span class="fa fa-plus-circle fa-2x pull-right" onclick="adduser('reader')"></span>
+                        </div>
+                        <div class="form-control userlistdisplay" id="readers"></div>
+                    </div>
+                    <div class="form-group col-sm-6">
+                        <label class="col-sm-12">Users with Write Access
+                            <span class="fa fa-info-circle" data-toggle="tooltip" title="" data-original-title="List the Lan IDs for users to be granted Write Access"></span>
+                        </label>
+                        <div class="input-group">
+                            <input type="text" id="addcontributor" />
+                            <span class="fa fa-plus-circle fa-2x pull-right" onclick="adduser('contributor')"></span>
+                        </div>
+                        <div class="form-control userlistdisplay" id="contributors"></div>
+                    </div>
+                    <div class="checkbox col-sm-12" id="pleaseextend" style="display:none">
+                        <label>
+                            <input type="checkbox" id="extensionrequested" value="">Check this box to extend the environment by 30 days
+                        </label>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 col-md-offset-4">
+                            <button type="button" class="btn btn-success btn-lg btn-block span6" id="updateRequest">Submit Request</button>
+                        </div>
+                    </div>
+                </form>
+                <div id="hiddenreaders" style="display:none"></div>
+                <div id="hiddencontributors" style="display:none"></div>
+                <!-- /.row -->
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="js/jquery.js"></script>
+    <!-- load moment library -->
+    <script src="js/moment.min.js"></script>
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="js/custom/sp.js"></script>
+    <script src="js/custom/functions.js"></script>
+
+    <script type="text/javascript">
+        $(window).load(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+            var params = {}
+            var listitem
+            var readerlist
+            var contributorlist
+            var priorRequests = []
+            var now = new Date();
+            var currentLoc = window.location.href.replace("/", "\/")
+            var querystring = window.location.search.substring(1)
+            var vars = querystring.split('&');
+            for (var i = 0; i < vars.length; i++) {
+                pair = vars[i].split('=');
+                params[pair[0]] = pair[1]
+            }
+            if (params['requestid']) {
+                $('#dataloader').hide();
+                $('#enabledEnvironments').hide();
+                $('#showBackButton').show();
+                $('#enabledEnvironmentsTitle').html('Update request');
+
+
+                var filterFormat = "$filter={0} eq {1}",
+                    filterQuery = filterFormat.format("Id", params['requestid']);
+                getListData('ExternalCloud', filterQuery, function (data) {
+                    if (data.length < 1) {
+                        $("#motd").html('Request was not found')
+                    } else {
+                        listitem = data[0];
+                        if (listitem.Extended == 'No') {
+                            $('#expirydate').show()
+                            $('#expirydate').html('Expiration Date: ' + listitem.ExpirationDate)
+                            $('#pleaseextend').show()
+                        } else {
+                            $("#motd").html('Request has been extended previously')
+                            $('#expirydatenotanoption').show()
+                            $('#expirydatenotanoption').html('Expiration Date: ' + listitem.ExpirationDate)
+                        }
+                        if (listitem.ReaderUserNames) {
+                            //$('#readers').html(listitem.ReaderUserNames.split(";").join("\n"))
+                            readerlist = listitem.ReaderUserNames.split(";")                            
+                            readerlist.splice(-1, 1)
+                            $('#hiddenreaders').html(readerlist.join(";"))
+                            var readerdisplay = '<ul>'
+                            for (var i = 0; i < readerlist.length; i++) {
+                                if (readerlist[i].length > 0) {
+                                    var args = "'readers',['" + readerlist.join("','") + "']," + i
+                                    readerdisplay = readerdisplay +
+                                        '<li><span class="badge badge-info">' + readerlist[i] +
+                                        '</span><span class="fa fa-times-circle" onclick="rescanusers(' +
+                                        args + ')"></span></li>';
+                                }
+
+                            }
+                            readerdisplay = readerdisplay + '</ul>'
+                            $('#readers').html(readerdisplay);
+                        }
+                        if (listitem.ContributorUserNames) {
+                            //$('#contributors').html(listitem.ContributorUserNames.split(";").join("\n"))
+                            var contributorlist = listitem.ContributorUserNames.split(";")
+                            contributorlist.splice(-1, 1)
+                            $('#hiddencontributors').html(contributorlist.join(";"))
+                            var contributordisplay = '<ul>'
+                            for (var i = 0; i < contributorlist.length; i++) {
+                                if (contributorlist[i].length > 0) {
+                                    var args = "'contributors',['" + contributorlist.join("','") +
+                                        "']," + i
+                                    contributordisplay = contributordisplay +
+                                        '<li><span class="badge badge-info">' + contributorlist[i] +
+                                        '</span><span class="fa fa-times-circle" onclick="rescanusers(' +
+                                        args + ')"></span></li>';
+                                }
+                            }
+                            contributordisplay = contributordisplay + '</ul>'
+                            $('#contributors').html(contributordisplay);
+                        }
+                        $('#initiative').html('Initiative: ' + listitem.InitiativeName)
+
+                        $('#requester').html('Requester: ' + listitem.Requester)
+                        $('#updateForm').show()
+                        $('#info').show()
+                    }
+                }, function () {})
+            } else {
+                $('#showBackButton').hide();
+                getListData('ExternalCloud', '', function (data) {
+                    //alert(JSON.stringify(data));                                
+                    for (var i = 0; i < data.length; i++) {
+                        var item = new Object;
+                        var element = data[i];
+                        item.reqid = element.Title;
+                        item.initiativename = element.InitiativeName;
+                        item.expirydate = element.ExpirationDate;
+                        datearray = item.expirydate.split("/")
+                        if (now < (new Date(datearray[2], datearray[1] - 1, datearray[0]))) {
+                            priorRequests.push(item);
+                        }
+                    }
+                    var output = '<div class="container" align-center>'
+                    for (var i = 0; i < priorRequests.length; i++) {
+                        var element = priorRequests[i];
+                        output = output + '<input type="button" class="btn btn-info" value="' + element
+                            .initiativename + '" onclick="open_item(' + element.reqid + ')">'
+                    }
+                    output = output + "</div>"
+                    $('#dataloader').hide();
+                    $("#envButtons").html(output);
+                }, function (data) {
+                    alert('Error retrieving list items');
+                });
+            }
+
+            $("#updateRequest").bind("click", function (e) {
+                if ($('#extensionrequested').is(":checked")) {
+                    listitem.Extended = 'Yes'
+                }
+                listitem.ReaderUserNames = $('#hiddenreaders').html().split(";").join("\n");
+                listitem.ContributorUserNames = $('#hiddencontributors').html().split(";").join("\n");
+                listitem.Modified = moment(new Date()).toISOString();
+                listitem.Created = moment(new Date()).toISOString();
+                listitem.RequestStatus = 'UpdateRequested';
+                updateListItem('ExternalCloud', listitem.Title, listitem, function (data) {
+                    $('#updateForm').hide()
+                    $('#info').hide()
+                    $("#motd").html('The request has been submitted')
+                }, function (data) {
+                    alert(JSON.stringify(data))
+                })
+            })
+        });
+    </script>
+
+</body>
+
+</html>

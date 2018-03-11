@@ -36,5 +36,8 @@ router.get('/demo', function(req, res, next) {
     res.render('demo', { title: 'Cloud Demo' });
   });
 
+router.get('/status',function(req,res) { 
+    res.json(process.env)
+});
 
 module.exports = router;
